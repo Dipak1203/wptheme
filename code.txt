@@ -1,0 +1,165 @@
+
+/* ============== This txt is all about custom wordpress theme ================ */
+
+/*
+
+Author : Dipak Kumal
+Passion : Develop
+Date : 2079-08-03
+
+*/
+
+// Update Date  2079-08-6
+ 
+### Basic Configuration
+        === Install wordpress
+### Basic File 
+        === index.php
+        === functions.php
+        === header.php
+        === footer.php
+        === page.php
+        === style.css
+        === screenshot(jpg)
+
+### Get Path
+        === echo get_template_directory_uri()
+
+### Get Dynamic Title
+        === echo get_bloginfo('name')
+
+### Get Dynamic Title tagline
+        === echo get_bloginfo('description')
+
+
+### Get Dynamic || Optimize || Secure scripts
+        === Create a function in functions.php file 
+        example
+        function news_site_scripts()
+           {
+                // Stylesheet
+                wp_enqueue_style('main_style', get_stylesheet_uri());
+                wp_enqueue_style('theme_style', get_template_directory_uri() . '/css/style.css');
+                wp_enqueue_style('bootstrap', get_template_directory_uri() . '/css/bootstrap/css/bootstrap.min.css');
+
+                //  For Javascript
+                wp_enqueue_script('bootstrap', get_template_directory_uri() . '/css/bootstrap/js/bootstrap.min.js', array(), '1.1', true);
+            }
+            //  attach with action hook
+                add_action('wp_enqueue_scripts','news_site_scripts');
+
+        === And Call the wp_head() => for css_file and wp_footer() => for javascript_file
+
+
+
+### Dynamic Logo
+        in functions.php file paste the following code 
+        function news_site_scripts()
+        {
+                // Stylesheet
+                wp_enqueue_style('main_style', get_stylesheet_uri());
+                wp_enqueue_style('theme_style', get_template_directory_uri() . '/css/style.css');
+                wp_enqueue_style('bootstrap', get_template_directory_uri() . '/css/bootstrap/css/bootstrap.min.css');
+
+                //  For Javascript
+                wp_enqueue_script('bootstrap', get_template_directory_uri() . '/css/bootstrap/js/bootstrap.min.js', array(), '1.1', true);
+        }
+                //  attach with action hook
+                add_action('wp_enqueue_scripts', 'news_site_scripts');
+
+
+
+
+### Dynamic Navbar using bootstrap
+        extract wp-bootstrap-nav-walkar and paste on the folder
+        in functions.php file paste the following code
+
+        function register_menu_theme()
+        {
+                require_once get_template_directory() . '/class-wp-bootstrap-navwalker.php';
+                register_nav_menus(
+                        array(
+                        'primary-menu' => __('Primary Menu'),
+                        'top-menu' => __('Top Menu'),
+                        'footer-menu' => __('Footer Menu')
+                        )
+                );
+        }
+        add_action('init', 'register_menu_theme');
+
+        in the navbar section paste the following code over the <ul> tag
+         <?php
+                    wp_nav_menu(array(
+                        'theme_location'  => 'primary-menu',
+                        'depth'           => 2, // 1 = no dropdowns, 2 = with dropdowns.
+                        'container'       => 'div',
+                        'container_class' => 'collapse navbar-collapse',
+                        'container_id'    => 'bs-example-navbar-collapse-1',
+                        'menu_class'      => 'navbar-nav mr-auto',
+                        'fallback_cb'     => 'WP_Bootstrap_Navwalker::fallback',
+                        'walker'          => new WP_Bootstrap_Navwalker(),
+                    ));
+         ?>
+
+
+
+### Creating Custom Post 
+        In functions.php file paste the following code 
+                
+        function register_my_post()
+        {
+                // code 
+                register_post_type('custom_projects', array(
+                        'labels' => array(
+                        'name' => __('Our Post'),
+                        'singular_name' => __('custom_projects')
+                        ),
+                        'public' => true,
+                        'show_in_nav_menus' => true,
+                        'has_archive' => false,
+                        'supports' => array('title', 'editor', 'excerpt', 'author', 'comments','revisions','custom-fields')
+                ));
+        }
+                // attach with action hook
+        add_action('init', 'register_my_post');
+
+        in post sections you have to paste following code 
+        
+         <?php $wpb_all_query = new WP_Query(array('post_type' => 'post','post_status' => 'publish'));?>
+
+
+                <ul>
+                        <?php 
+                                while($wpb_all_query->have_posts()) : 
+                                        $wpb_all_query->the_post();
+                        ?>
+                        <li>
+                                <a href="<?php the_permalink(); ?>"> <?php the_title(); ?></a>
+                                <p><?php the_content(); ?></p>
+                        </li>
+                        <?php endwhile; ?>
+                </ul>
+
+
+### Custom Widget 
+
+        in functions.php you have to paste following code 
+        function custome_widgets_sidebar()
+        {
+                register_sidebar(array(
+                        'name' => __('Primary Sidebar1','theme_name'),
+                        'id' => 'sidebar-1',
+                        'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+                        'after_widget' => '</aside>',
+                        'before_title' => '<h1 class="widget-title>"',
+                        'after_title' => '</h1>',
+                ));
+        }
+// attach action hook sidebar widgets
+add_action('widgets_init','custome_widgets_sidebar');
+
+
+
+
+
+### 
